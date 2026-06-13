@@ -688,6 +688,12 @@ class App(tk.Tk):
             return f"#{value}"
         return fallback
 
+    def _preview_canvas_size(self, video_w: int, video_h: int) -> tuple[int, int]:
+        max_w = 520
+        max_h = 300
+        scale = min(max_w / video_w, max_h / video_h)
+        return max(120, int(video_w * scale)), max(120, int(video_h * scale))
+
     def _draw_preview_text(self, canvas: tk.Canvas, text: str, x: float, y: float,
                            font_name: str, size: int, fill: str, outline: str,
                            direction: str) -> None:
@@ -714,8 +720,19 @@ class App(tk.Tk):
         canvas = self.preview_canvas
         if canvas is None:
             return
-        width = max(canvas.winfo_width(), 480)
-        height = max(canvas.winfo_height(), 270)
+        try:
+            video_w = max(1, int(self.exo_width_var.get()))
+            video_h = max(1, int(self.exo_height_var.get()))
+        except Exception:
+            video_w = DEFAULT_EXO_CONFIG["width"]
+            video_h = DEFAULT_EXO_CONFIG["height"]
+
+        preview_w, preview_h = self._preview_canvas_size(video_w, video_h)
+        if int(canvas.cget("width")) != preview_w or int(canvas.cget("height")) != preview_h:
+            canvas.configure(width=preview_w, height=preview_h)
+
+        width = preview_w
+        height = preview_h
         canvas.delete("all")
         canvas.create_rectangle(0, 0, width, height, fill="#20242a", outline="")
         canvas.create_line(width / 2, 0, width / 2, height, fill="#3c424c")
@@ -723,8 +740,6 @@ class App(tk.Tk):
         canvas.create_rectangle(8, 8, width - 8, height - 8, outline="#606975")
 
         try:
-            video_w = max(1, int(self.exo_width_var.get()))
-            video_h = max(1, int(self.exo_height_var.get()))
             scale = min((width - 16) / video_w, (height - 16) / video_h)
             offset_x = (width - video_w * scale) / 2
             offset_y = (height - video_h * scale) / 2
