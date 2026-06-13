@@ -1,4 +1,7 @@
 __pycache__/
+build/
+dist/
+*.spec
 *.py[cod]
 *.pyo
 *.pyd
@@ -7,6 +10,7 @@ __pycache__/
 venv/
 env/
 *.log
+*.zip
 output/
 outputs/
 *.wav
