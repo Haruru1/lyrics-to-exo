@@ -1,4 +1,4 @@
-# Lyrics to EXO GUI
+# Lyrics to EXO
 
 歌詞テキストと音声ファイルから、LRC / timed JSON / AviUtl EXO をまとめて生成するデスクトップツールです。
 
